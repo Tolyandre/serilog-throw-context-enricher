@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Serilog.FromExceptionContextEnricher\Serilog.FromExceptionContextEnricher.csproj" />
+    <ProjectReference Include="..\Serilog.FromExceptionContextEnricher\Serilog.ThrowingContext.csproj" />
   </ItemGroup>
 
 </Project>

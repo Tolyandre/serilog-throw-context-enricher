@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.FromExceptionContextEnricher", "Serilog.FromExceptionContextEnricher\Serilog.FromExceptionContextEnricher.csproj", "{42BF7183-AAC3-4FAC-BDC8-0D3FC8F70A69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ThrowingContext", "Serilog.FromExceptionContextEnricher\Serilog.ThrowingContext.csproj", "{42BF7183-AAC3-4FAC-BDC8-0D3FC8F70A69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleApp", "ExampleApp\ExampleApp.csproj", "{166E1779-3E23-4FE6-A940-525A89F89D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleApp", "ExampleApp\ExampleApp.csproj", "{166E1779-3E23-4FE6-A940-525A89F89D3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serilog.ThrowingContext.Tests", "Serilog.FromExceptionContextEnricher.Tests\Serilog.ThrowingContext.Tests.csproj", "{16AA1E39-4BEE-4335-99DB-C808CF8103C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{166E1779-3E23-4FE6-A940-525A89F89D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{166E1779-3E23-4FE6-A940-525A89F89D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{166E1779-3E23-4FE6-A940-525A89F89D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16AA1E39-4BEE-4335-99DB-C808CF8103C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16AA1E39-4BEE-4335-99DB-C808CF8103C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16AA1E39-4BEE-4335-99DB-C808CF8103C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16AA1E39-4BEE-4335-99DB-C808CF8103C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
