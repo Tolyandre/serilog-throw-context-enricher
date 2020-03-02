@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Serilog.FromExceptionContextEnricher.ExampleApp</RootNamespace>
+    <RootNamespace>Serilog.ThrowingContext.ExampleApp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Serilog.FromExceptionContextEnricher\Serilog.ThrowingContext.csproj" />
+    <ProjectReference Include="..\Serilog.ThrowingContext\Serilog.ThrowingContext.csproj" />
   </ItemGroup>
 
 </Project>

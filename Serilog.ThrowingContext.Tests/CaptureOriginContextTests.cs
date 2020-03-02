@@ -8,17 +8,14 @@ using Xunit;
 
 namespace Serilog.ThrowingContext.Tests
 {
-    public class ThrowingContextEnricherTests
+    public class CaptureOriginContextTests
     {
-
-        private LogEvent _lastEvent;
+        private LogEvent _lastEvent = null;
         private readonly ILogger _log;
 
-        public ThrowingContextEnricherTests()
+        public CaptureOriginContextTests()
         {
             ThrowingContextEnricher.EnsureInitialized();
-
-            _lastEvent = null;
 
             _log = new LoggerConfiguration()
               .Enrich.FromLogContext()
@@ -38,9 +35,8 @@ namespace Serilog.ThrowingContext.Tests
             catch (ApplicationException ex)
             {
                 using (LogContext.Push(new ThrowingContextEnricher()))
-                {
                     _log.Information(ex, "Unit test");
-                }
+
             }
 
             Assert.Equal(1, _lastEvent.Properties["A"].LiteralValue());
@@ -61,9 +57,7 @@ namespace Serilog.ThrowingContext.Tests
                 await Task.Delay(1);
 
                 using (LogContext.Push(new ThrowingContextEnricher()))
-                {
                     _log.Information(ex, "Unit test");
-                }
             }
 
             Assert.Equal(1, _lastEvent.Properties["A"].LiteralValue());

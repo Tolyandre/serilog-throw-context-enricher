@@ -43,7 +43,7 @@ namespace Serilog.ThrowingContext
             {
                 if (ConditionalWeakTable.TryGetValue(exception, out List<ILogEventEnricher> contexts))
                 {
-                    foreach (var context in contexts.AsEnumerable().Reverse())
+                    foreach (var context in contexts)
                     {
                         context.Enrich(logEvent, propertyFactory);
                     }
