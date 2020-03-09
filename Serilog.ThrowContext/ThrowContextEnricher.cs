@@ -3,18 +3,17 @@ using Serilog.Core;
 using Serilog.Events;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 
-namespace Serilog.ThrowingContext
+namespace Serilog.ThrowContext
 {
-    public class ThrowingContextEnricher : ILogEventEnricher
+    public class ThrowContextEnricher : ILogEventEnricher
     {
         static readonly ConditionalWeakTable<Exception, List<ILogEventEnricher>> ConditionalWeakTable =
             new ConditionalWeakTable<Exception, List<ILogEventEnricher>>();
 
-        static ThrowingContextEnricher()
+        static ThrowContextEnricher()
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
         }
@@ -22,7 +21,7 @@ namespace Serilog.ThrowingContext
         /// <summary>
         /// Ensures that capturing of thrown exception log context is initialized.
         ///
-        /// This method should be invoked only if <c>ThrowingContextEnricher</c> is not referenced before the actual exception may occur.
+        /// This method should be invoked only if <c>ThrowContextEnricher</c> is not referenced before the actual exception may occur.
         /// </summary>
         public static void EnsureInitialized()
         {

@@ -11,7 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Formatting.Compact;
-using Serilog.ThrowingContext;
+using Serilog.ThrowContext;
 
 namespace AspNetCoreSample
 {
@@ -32,7 +32,7 @@ namespace AspNetCoreSample
                 loggingBuilder.AddSerilog(
                     new LoggerConfiguration()
                          .Enrich.FromLogContext()
-                         .Enrich.With<ThrowingContextEnricher>()
+                         .Enrich.With<ThrowContextEnricher>()
                         .WriteTo.File(new CompactJsonFormatter(), "log.txt")
                         .CreateLogger(),
                     dispose: true));

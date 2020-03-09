@@ -1,7 +1,7 @@
 ﻿using Serilog;
 using Serilog.Context;
 using Serilog.Formatting.Compact;
-using Serilog.ThrowingContext;
+using Serilog.ThrowContext;
 using System;
 
 namespace ExampleApp
@@ -12,7 +12,7 @@ namespace ExampleApp
         {
             Log.Logger = new LoggerConfiguration()
              .Enrich.FromLogContext()
-             .Enrich.With<ThrowingContextEnricher>()
+             .Enrich.With<ThrowContextEnricher>()
 
              .WriteTo.Console(new RenderedCompactJsonFormatter())
              .CreateLogger();

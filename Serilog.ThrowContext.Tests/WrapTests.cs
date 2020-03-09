@@ -1,12 +1,12 @@
 using Serilog.Context;
 using Serilog.Core.Enrichers;
 using Serilog.Events;
-using Serilog.ThrowingContext.Tests.Support;
+using Serilog.ThrowContext.Tests.Support;
 using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Serilog.ThrowingContext.Tests
+namespace Serilog.ThrowContext.Tests
 {
     public class WrapTests
     {
@@ -15,7 +15,7 @@ namespace Serilog.ThrowingContext.Tests
 
         public WrapTests()
         {
-            ThrowingContextEnricher.EnsureInitialized();
+            ThrowContextEnricher.EnsureInitialized();
 
             _log = new LoggerConfiguration()
               .Enrich.FromLogContext()
@@ -41,7 +41,7 @@ namespace Serilog.ThrowingContext.Tests
             }
             catch (ApplicationException ex)
             {
-                using (LogContext.Push(new ThrowingContextEnricher()))
+                using (LogContext.Push(new ThrowContextEnricher()))
                     _log.Information(ex, "Unit test");
             }
 
@@ -73,7 +73,7 @@ namespace Serilog.ThrowingContext.Tests
             {
                 await Task.Delay(1);
 
-                using (LogContext.Push(new ThrowingContextEnricher()))
+                using (LogContext.Push(new ThrowContextEnricher()))
                     _log.Information(ex, "Unit test");
             }
 
@@ -99,7 +99,7 @@ namespace Serilog.ThrowingContext.Tests
             }
             catch (ApplicationException ex)
             {
-                using (LogContext.Push(new ThrowingContextEnricher()))
+                using (LogContext.Push(new ThrowContextEnricher()))
                     _log.Information(ex, "Unit test");
             }
 

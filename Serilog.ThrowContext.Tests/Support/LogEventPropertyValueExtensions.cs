@@ -1,6 +1,6 @@
 ﻿using Serilog.Events;
 
-namespace Serilog.ThrowingContext.Tests.Support
+namespace Serilog.ThrowContext.Tests.Support
 {
     public static class LogEventPropertyValueExtensions
     {
