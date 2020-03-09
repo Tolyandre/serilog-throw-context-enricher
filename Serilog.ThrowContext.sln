@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ThrowContext", "Serilog.ThrowContext\Serilog.ThrowContext.csproj", "{42BF7183-AAC3-4FAC-BDC8-0D3FC8F70A69}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExampleApp", "ExampleApp\ExampleApp.csproj", "{166E1779-3E23-4FE6-A940-525A89F89D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "Samples\ConsoleSample\ConsoleSample.csproj", "{166E1779-3E23-4FE6-A940-525A89F89D3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Serilog.ThrowContext.Tests", "Serilog.ThrowContext.Tests\Serilog.ThrowContext.Tests.csproj", "{16AA1E39-4BEE-4335-99DB-C808CF8103C8}"
 EndProject
@@ -43,6 +43,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{166E1779-3E23-4FE6-A940-525A89F89D3F} = {1EFD4BDC-FDBF-4062-AE7D-013E345C429F}
 		{424B8CF2-740B-48B2-9531-F5CC7F108F29} = {1EFD4BDC-FDBF-4062-AE7D-013E345C429F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

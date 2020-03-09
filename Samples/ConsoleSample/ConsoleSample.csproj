@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Serilog.ThrowContext\Serilog.ThrowContext.csproj" />
+    <ProjectReference Include="..\..\Serilog.ThrowContext\Serilog.ThrowContext.csproj" />
   </ItemGroup>
 
 </Project>
