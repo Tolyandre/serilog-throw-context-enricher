@@ -5,13 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
+using System.Threading;
 
 namespace Serilog.ThrowContext
 {
     public class ThrowContextEnricher : ILogEventEnricher
     {
-        static readonly ConditionalWeakTable<Exception, List<ILogEventEnricher>> ConditionalWeakTable =
-            new ConditionalWeakTable<Exception, List<ILogEventEnricher>>();
+        static readonly ConditionalWeakTable<Exception, List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>> ConditionalWeakTable =
+            new ConditionalWeakTable<Exception, List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>>();
 
         static ThrowContextEnricher()
         {
@@ -30,8 +31,8 @@ namespace Serilog.ThrowContext
 
         private static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            var exceptionContexts = ConditionalWeakTable.GetValue(e.Exception, _ => new List<ILogEventEnricher>());
-            exceptionContexts.Add(LogContext.Clone());
+            var exceptionContexts = ConditionalWeakTable.GetValue(e.Exception, _ => new List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>());
+            exceptionContexts.Add((LogContext.Clone(), ExecutionContext.Capture()));
         }
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
@@ -40,11 +41,14 @@ namespace Serilog.ThrowContext
 
             while (exception != null)
             {
-                if (ConditionalWeakTable.TryGetValue(exception, out List<ILogEventEnricher> contexts))
+                if (ConditionalWeakTable.TryGetValue(exception, out List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)> contexts))
                 {
                     foreach (var context in contexts)
                     {
-                        context.Enrich(logEvent, propertyFactory);
+                        ExecutionContext.Run(context.ExecutionContext, _ =>
+                        {
+                            context.EnricherContext.Enrich(logEvent, propertyFactory);
+                        }, null);
                     }
                 }
 
