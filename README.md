@@ -2,11 +2,12 @@
 Captures LogContext of thrown exception to enrich logs when the exception is actually logged.
 
 ## Problem
-Withing a scope logger writes context properties. If an exception occurs and gets logged in an exception handler, context properties are lost.
+Usual logs contain context properties of their scope. If an exception occurs and gets logged in an exception handler, context properties of origin scope are lost.
+
+Consider some asp.net core controller:
 ```
-// some asp.net core controller
 [HttpGet()]
-public IEnumerable<WeatherForecast> Get()
+public WeatherForecast Get()
 {
     var rng = new Random();
     using (LogContext.Push(new PropertyEnricher("WeatherForecast", new
@@ -21,8 +22,9 @@ public IEnumerable<WeatherForecast> Get()
         throw new Exception("Oops");
     }
 }
-
-// global exception handler middleware
+```
+and global exception handler middleware:
+```
 app.Use(async (context, next) =>
 {
     try
