@@ -37,6 +37,8 @@ app.Use(async (context, next) =>
 ```
 
 ## Installation
+It is possible to register ThrowContextEnricher globally or just to use once in a specific exception handler.
+
 ### Global enricher
 Just add `.Enrich.With<ThrowContextEnricher>()`:
 
