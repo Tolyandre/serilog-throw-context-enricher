@@ -2,10 +2,27 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Version>0.1.0</Version>
+    <Product>Throw context enricher for Serilog</Product>
+    <Company />
+    <Authors>Tolyandre</Authors>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl />
+    <RepositoryUrl>https://github.com/Tolyandre/serilog-throw-context-enricher</RepositoryUrl>
+    <Description>Captures LogContext of a thrown exception to enrich logs when the exception is eventually logged.</Description>
+    <PackageTags>Serilog Exception LogContext</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Serilog" Version="2.9.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

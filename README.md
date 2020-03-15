@@ -1,4 +1,4 @@
-# Throw context enricher for Serilog [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/tolyandre/serilog-throw-context-enricher/1)](https://tolyandre.visualstudio.com/serilog-throw-context-enricher/_build?definitionId=1)
+# Throw context enricher for Serilog [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/tolyandre/serilog-throw-context-enricher/1)](https://tolyandre.visualstudio.com/serilog-throw-context-enricher/_build?definitionId=1) [![Nuget](https://img.shields.io/nuget/v/Serilog.ThrowContext)](https://www.nuget.org/packages/Serilog.ThrowContext)
 Captures LogContext of a thrown exception to enrich logs when the exception is eventually logged.
 
 ## Use case
