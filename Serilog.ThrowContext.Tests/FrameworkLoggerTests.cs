@@ -37,7 +37,6 @@ namespace Serilog.ThrowContext.Tests
             Assert.Equal(1, _lastEvent.Properties["A"].LiteralValue());
         }
 
-        // These tests doesn't pass, as BeginScope in serilog has internal state separated from LogContext
         [Fact]
         public void CapturesContextProperty()
         {
@@ -74,6 +73,25 @@ namespace Serilog.ThrowContext.Tests
             }
 
             Assert.Equal(1, _lastEvent.Properties["A"].LiteralValue());
+        }
+
+        [Fact]
+        public void CapturesContextPropertyWithNestedScopes()
+        {
+            try
+            {
+                using (_frameworkLogger.BeginScope(new Dictionary<string, object> { { "A", 1 } }))
+                using (_frameworkLogger.BeginScope(new Dictionary<string, object> { { "B", 2 } }))
+                    throw new ApplicationException();
+            }
+            catch (ApplicationException ex)
+            {
+                using (Serilog.Context.LogContext.Push(new ThrowContextEnricher()))
+                    _serilogLogger.Information(ex, "Unit test");
+            }
+
+            Assert.Equal(1, _lastEvent.Properties["A"].LiteralValue());
+            Assert.Equal(2, _lastEvent.Properties["B"].LiteralValue());
         }
     }
 }

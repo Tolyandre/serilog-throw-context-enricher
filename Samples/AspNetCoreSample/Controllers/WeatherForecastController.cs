@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Serilog.Context;
-using Serilog.Core.Enrichers;
 
 namespace AspNetCoreSample.Controllers
 {
@@ -30,15 +28,15 @@ namespace AspNetCoreSample.Controllers
         }
 
         [HttpGet("get1")]
-        public IEnumerable<WeatherForecast> Get1()
+        public WeatherForecast Get1()
         {
             var rng = new Random();
-            using (LogContext.Push(new PropertyEnricher("WeatherForecast", new
+            using (LogContext.PushProperty("WeatherForecast", new
             {
                 Date = DateTime.Now.AddDays(1),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
-            })))
+            }))
             {
                 _logger.LogInformation("Today Weather forecast 1");
 
@@ -47,7 +45,7 @@ namespace AspNetCoreSample.Controllers
         }
 
         [HttpGet("get2")]
-        public IEnumerable<WeatherForecast> Get2()
+        public WeatherForecast Get2()
         {
             var rng = new Random();
             using (_logger.BeginScope(new
