@@ -3,7 +3,7 @@ Captures LogContext of a thrown exception to enrich logs when the exception is e
 
 ## Use case
 Assume an exception is thrown in scope with context properties:
-```
+```c#
 [HttpGet()]
 public WeatherForecast Get()
 {
@@ -20,7 +20,7 @@ public WeatherForecast Get()
 }
 ```
 If the exception is caught and logged outside the scope, context properties are lost by default.
-```
+```c#
 // global exception handler middleware
 app.Use(async (context, next) =>
 {
@@ -40,7 +40,7 @@ app.Use(async (context, next) =>
 ### Global enricher
 Just add `.Enrich.With<ThrowContextEnricher>()`:
 
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
@@ -51,7 +51,7 @@ Log.Logger = new LoggerConfiguration()
 
 Note that order of `ThrowContextEnricher` and Serilog's `LogContextEnricher` matters when a property exists both in exception's origin and handler contexts:
 
-```
+```c#
 using (LogContext.PushProperty("A", "outer"))
     try
     {
@@ -68,7 +68,7 @@ using (LogContext.PushProperty("A", "outer"))
 ```
 
 Exception's value is used (A="inner"):
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
@@ -76,7 +76,7 @@ Log.Logger = new LoggerConfiguration()
 ```
 
 Handler's value is used (A="outer"):
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.With<ThrowContextEnricher>()
@@ -86,7 +86,7 @@ Log.Logger = new LoggerConfiguration()
 ### Local enricher
 It is also possible to enrich only specific log rather registering the enricher globally:
 
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     ...
@@ -117,7 +117,7 @@ Note `ThrowContextEnricher.EnsureInitialized()` is used to trigger ThrowContextE
 
 ## Rethrow
 If an exception is rethrown in a different context, the origin property value is not overwritten:
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
@@ -147,7 +147,7 @@ catch (ApplicationException ex)
 ## Wrap
 If an exception is wrapped into another in a different context, the wrapper context is used. Log of inner exception produces origin value though.
 
-```
+```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
