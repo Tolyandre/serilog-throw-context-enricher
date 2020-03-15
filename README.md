@@ -51,37 +51,45 @@ Log.Logger = new LoggerConfiguration()
 
 Note that order of `ThrowContextEnricher` and Serilog's `LogContextEnricher` matters when a property exists both in exception's origin and handler contexts:
 
-```c#
+<table> 
+    <tr>
+        <td>
+<pre lang="c#">
+Log.Logger = new LoggerConfiguration()
+    .Enrich.With&lt;ThrowContextEnricher&gt;()
+    .Enrich.FromLogContext()
+    ...
+</pre>
+        </td>
+        <td>
+<pre lang="c#">
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.With&lt;ThrowContextEnricher&gt;()
+    ...
+</pre>    
+    </tr>
+    <tr>
+        <td colspan="2">
+<pre lang="c#">
 using (LogContext.PushProperty("A", "outer"))
     try
     {
         using (LogContext.PushProperty("A", "inner"))
-        {
             throw new Exception();
-        }
-
     }
     catch (Exception ex)
     {
         Log.Error(ex, "Value of A is {A}");
     }
-```
-
-Exception's value is used (A="inner"):
-```c#
-Log.Logger = new LoggerConfiguration()
-    .Enrich.With<ThrowContextEnricher>()
-    .Enrich.FromLogContext()
-    ...
-```
-
-Handler's value is used (A="outer"):
-```c#
-Log.Logger = new LoggerConfiguration()
-    .Enrich.FromLogContext()
-    .Enrich.With<ThrowContextEnricher>()
-    ...
-```
+</pre>
+        </td>
+    </tr>
+    <tr>
+        <td>Exception's value is used (A="inner")</td>
+        <td>Handler's value is used (A="outer")</td>
+    </tr>
+</table>
 
 ### Local enricher
 It is also possible to enrich only specific log rather registering the enricher globally:
