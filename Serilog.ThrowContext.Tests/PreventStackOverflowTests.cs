@@ -23,7 +23,7 @@ namespace Serilog.ThrowContext.Tests
             {
                 try
                 {
-                    using (LogContext.Push(new PropertyEnricher("A", 1)))
+                    using (LogContext.PushProperty("A", 1))
                         throw new ApplicationException();
 
                 }

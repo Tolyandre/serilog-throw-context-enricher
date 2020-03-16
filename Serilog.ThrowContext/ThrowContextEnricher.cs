@@ -14,6 +14,8 @@ namespace Serilog.ThrowContext
         static readonly ConditionalWeakTable<Exception, List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>> ConditionalWeakTable =
             new ConditionalWeakTable<Exception, List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>>();
 
+        static readonly ConditionalWeakTable<LogEvent, object> EnrichedLogEvents = new ConditionalWeakTable<LogEvent, object>();
+
         static ThrowContextEnricher()
         {
             AppDomain.CurrentDomain.FirstChanceException += CurrentDomain_FirstChanceException;
@@ -37,6 +39,25 @@ namespace Serilog.ThrowContext
 
         public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
         {
+            if (logEvent.Exception == null)
+                return;
+
+            // prevent recursion if an exception is thrown inside our enricher scope
+            bool alreadyEnriched = true;
+            EnrichedLogEvents.GetValue(logEvent, _ =>
+            {
+                alreadyEnriched = false;
+                return null;
+            });
+
+            if (!alreadyEnriched)
+                EnrichInternal(logEvent, propertyFactory);
+
+            EnrichedLogEvents.Remove(logEvent);
+        }
+
+        private static void EnrichInternal(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+        {
             Exception exception = logEvent.Exception;
 
             while (exception != null)
@@ -45,6 +66,7 @@ namespace Serilog.ThrowContext
                 {
                     foreach (var context in contexts)
                     {
+                        // ExecutionContext is only needed to support framework's logger BeginScope (Serilog.Extensions.Logging)
                         ExecutionContext.Run(context.ExecutionContext, _ =>
                         {
                             context.EnricherContext.Enrich(logEvent, propertyFactory);

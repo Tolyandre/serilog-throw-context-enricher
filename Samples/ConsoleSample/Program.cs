@@ -15,6 +15,7 @@ namespace ExampleApp
             Example3();
             //ExampleRethrow();
             //ExampleWrap();
+            //ThrowInEnricherScope();
 
             Log.CloseAndFlush();
         }
@@ -147,6 +148,28 @@ namespace ExampleApp
             {
                 Log.Information(ex, "A={A}, B={B}");
                 Log.Information(ex.InnerException, "A={A}, B={B}");
+            }
+        }
+
+        public static void ThrowInEnricherScope()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.Console(new RenderedCompactJsonFormatter())
+                .CreateLogger();
+
+            using (LogContext.Push(new ThrowContextEnricher()))
+            {
+                try
+                {
+                    using (LogContext.PushProperty("A", 1))
+                        throw new ApplicationException();
+
+                }
+                catch (ApplicationException ex)
+                {
+                    Log.Information(ex, "Unit test");
+                }
             }
         }
     }
