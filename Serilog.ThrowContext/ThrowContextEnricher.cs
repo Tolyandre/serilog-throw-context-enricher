@@ -50,10 +50,10 @@ namespace Serilog.ThrowContext
                 return null;
             });
 
-            if (!alreadyEnriched)
-                EnrichInternal(logEvent, propertyFactory);
+            if (alreadyEnriched)
+                return;
 
-            EnrichedLogEvents.Remove(logEvent);
+            EnrichInternal(logEvent, propertyFactory);
         }
 
         private static void EnrichInternal(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
