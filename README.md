@@ -1,5 +1,5 @@
 # Throw context enricher for Serilog [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/tolyandre/serilog-throw-context-enricher/1)](https://tolyandre.visualstudio.com/serilog-throw-context-enricher/_build?definitionId=1) [![Nuget](https://img.shields.io/nuget/v/Serilog.ThrowContext)](https://www.nuget.org/packages/Serilog.ThrowContext)
-Captures LogContext of a thrown exception to enrich logs when the exception is eventually logged.
+Captures LogContext on `throw` to enrich exception's log with origin context.
 
 ## Use case
 Assume an exception is thrown in scope with context properties:
@@ -7,13 +7,13 @@ Assume an exception is thrown in scope with context properties:
 [HttpGet()]
 public WeatherForecast Get()
 {
-    var rng = new Random();
-    using (LogContext.PushProperty("WeatherForecast", new
+    var weatherForecast = new WeatherForecast
     {
         Date = DateTime.Now.AddDays(1),
-        TemperatureC = rng.Next(-20, 55),
-        Summary = Summaries[rng.Next(Summaries.Length)]
-    }))
+        TemperatureC = new Random().Next(-20, 55),
+    }
+
+    using (LogContext.PushProperty("WeatherForecast", weatherForecast))
     {
         throw new Exception("Oops");
     }
@@ -33,13 +33,17 @@ app.Use(async (context, next) =>
         log.LogError(ex, "Exceptional weather"); // would not contain WeatherForecast property`
     }
 });
-
 ```
 
-## Installation
-It is possible to register ThrowContextEnricher globally or just to use once in a specific exception handler.
+This library enriches exception logs with properties from a throwing scope.
 
-### Global enricher
+It works both with pure Serilog `LogContext.PushProperty()` and framework's logger `_logger.BeginScope()`. Some special cases described below.
+
+
+## Setup
+Add `ThrowContextEnricher` globally or enrich a specific exception handler.
+
+### Global setup
 Just add `.Enrich.With<ThrowContextEnricher>()`:
 
 ```c#
@@ -51,12 +55,14 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
-Note that order of `ThrowContextEnricher` and Serilog's `LogContextEnricher` matters when a property exists both in exception's origin and handler contexts:
+### Note on enrichers order
+Properties can exist both in exception's origin and exception handler contexts. And they can have different values. In this case order of `ThrowContextEnricher` and `FromLogContext` matters:
 
-<table> 
+<table>
     <tr>
         <td>
 <pre lang="c#">
+// Logs value from exception origin (A="inner")
 Log.Logger = new LoggerConfiguration()
     .Enrich.With&lt;ThrowContextEnricher&gt;()
     .Enrich.FromLogContext()
@@ -65,15 +71,16 @@ Log.Logger = new LoggerConfiguration()
         </td>
         <td>
 <pre lang="c#">
+// Logs value from exception handler (A="outer")
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
     .Enrich.With&lt;ThrowContextEnricher&gt;()
     ...
-</pre>    
+</pre>
     </tr>
-    <tr>
-        <td colspan="2">
-<pre lang="c#">
+</table>
+
+```c#
 using (LogContext.PushProperty("A", "outer"))
     try
     {
@@ -82,19 +89,15 @@ using (LogContext.PushProperty("A", "outer"))
     }
     catch (Exception ex)
     {
+        // A=inner or A=outer?
         Log.Error(ex, "Value of A is {A}");
     }
-</pre>
-        </td>
-    </tr>
-    <tr>
-        <td>Exception's value is used (A="inner")</td>
-        <td>Handler's value is used (A="outer")</td>
-    </tr>
-</table>
+```
 
-### Local enricher
-It is also possible to enrich only specific log rather registering the enricher globally:
+
+
+### Local enrichment
+To enrich only specific logs, push `ThrowContextEnricher` to LogContext as usual:
 
 ```c#
 Log.Logger = new LoggerConfiguration()
@@ -122,16 +125,17 @@ using (LogContext.PushProperty("A", "outer"))
         }
     }
 ```
+Note `ThrowContextEnricher.EnsureInitialized()` is used to trigger `ThrowContextEnricher` to begin capturing properties. If this call is omitted, enricher initializes lazily. Thus the first logged exception would miss properties.
 
-Note `ThrowContextEnricher.EnsureInitialized()` is used to trigger ThrowContextEnricher' static ctor to begin capturing properties. If this call is omitted, enricher may be lazily initialized only in an exception handler, thus the first occurred exception would miss properties.
+## Special cases
 
-## Rethrow
+### Rethrow
 If an exception is rethrown in a different context, the origin property value is not overwritten:
 ```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
-    .WriteTo.Console(new RenderedCompactJsonFormatter())
+    ...
     .CreateLogger();
 
 try
@@ -154,14 +158,14 @@ catch (ApplicationException ex)
 }
 ```
 
-## Wrap
+### Wrap
 If an exception is wrapped into another in a different context, the wrapper context is used. Log of inner exception produces origin value though.
 
 ```c#
 Log.Logger = new LoggerConfiguration()
     .Enrich.With<ThrowContextEnricher>()
     .Enrich.FromLogContext()
-    .WriteTo.Console(new RenderedCompactJsonFormatter())
+    ...
     .CreateLogger();
 
 try
