@@ -33,7 +33,7 @@ namespace Serilog.ThrowContext
 
         private static void CurrentDomain_FirstChanceException(object sender, FirstChanceExceptionEventArgs e)
         {
-            var exceptionContexts = ConditionalWeakTable.GetValue(e.Exception, _ => new List<(ILogEventEnricher EnricherContext, ExecutionContext ExecutionContext)>());
+            var exceptionContexts = ConditionalWeakTable.GetOrCreateValue(e.Exception);
             exceptionContexts.Add((LogContext.Clone(), ExecutionContext.Capture()));
         }
 
