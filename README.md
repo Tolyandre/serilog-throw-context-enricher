@@ -55,6 +55,37 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 ```
 
+### Setup with appsettings.json
+Full `appsettings.json` configuration is also possible with [Serilog.Settings.Configuration](https://github.com/serilog/serilog-settings-configuration).
+Make sure you referenced all the assemblies. See [appsettings.json](./Samples/FileConfigurationSample/appsettings.json) in Samples.
+```json
+{
+  "Serilog": {
+    "MinimumLevel": "Debug",
+    "Enrich": [
+      "FromLogContext",
+      {
+        "Name": "With",
+        "Args": { "enricher": "Serilog.ThrowContext.ThrowContextEnricher, Serilog.ThrowContext" }
+      }
+    ],
+    "WriteTo": [{
+        "Name": "Console",
+        "Args": {
+          "formatter": "Serilog.Formatting.Compact.RenderedCompactJsonFormatter, Serilog.Formatting.Compact"
+        }
+      }
+    ]
+  }
+}
+```
+
+```c#
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
+```
+
 ### Note on enrichers order
 Properties can exist both in exception's origin and exception handler contexts. And they can have different values. In this case order of `ThrowContextEnricher` and `FromLogContext` matters:
 
